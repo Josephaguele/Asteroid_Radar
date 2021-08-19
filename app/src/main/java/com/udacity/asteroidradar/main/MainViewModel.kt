@@ -1,64 +1,63 @@
 package com.udacity.asteroidradar.main
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.udacity.asteroidradar.Asteroid
 import com.udacity.asteroidradar.PictureOfDay
+import com.udacity.asteroidradar.api.NasaApi
+import com.udacity.asteroidradar.api.parseAsteroidsJsonResult
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
-import com.udacity.asteroidradar.api.NasaApi
 import retrofit2.Response
 
 
 class MainViewModel : ViewModel() {
 
     private val _response = MutableLiveData<String>()
-    val response :LiveData<String>
-    get() = _response
+    val response: LiveData<String>
+        get() = _response
 
-    private val _asResponse = MutableLiveData<String>()
-    val asResponse : LiveData<String>
-    get() = _asResponse
+
+    private val _asteroids = MutableLiveData<List<Asteroid>>()
+    val asteroids: LiveData<List<Asteroid>>
+    get() = _asteroids
+
     /**
-     * Call getMarsRealEstateProperties() on init so we can display status immediately.
+     * Call methods() on init so we can display status immediately.
      */
     init {
         getResponse()
-        getAsteroidResponse()
+        getAsteroids()
 
     }
 
-    private fun getResponse()
-    {
-        NasaApi.retrofitService.getProperties().enqueue(object:Callback<PictureOfDay>{
-            override fun onResponse(call: Call<PictureOfDay>, response: Response<PictureOfDay>) {
-                _response.value = response.body().toString()
+    private fun getResponse(){
+        viewModelScope.launch {
+            try{
+            var result =    NasaApi.retrofitService.getProperties()
+                _response.value = result.toString()
+            }catch (e:Exception)
+            {
+                _response.value = "Failure: ${e.message}"
             }
+        }
+    }
 
-            override fun onFailure(call: Call<PictureOfDay>, t: Throwable) {
-                _response.value = "Failure" + t.message
+
+    private fun getAsteroids(){
+        NasaApi.retrofitService.getAsteroidList().enqueue(object : Callback<String>{
+            override fun onResponse(call: Call<String>, response: Response<String>) {
+                _asteroids.value = response.body()?.
+                let { parseAsteroidsJsonResult(JSONObject(it)) }
             }
-
+            override fun onFailure(call: Call<String>, t: Throwable) {
+                _response.value = t.message
+            }
         })
-        _response.value = "Set the api response here."
     }
-
-    private fun getAsteroidResponse()
-    {
-        NasaApi.retrofitService.getAsteroidList().enqueue(object:Callback<Asteroid>{
-            override fun onResponse(call: Call<Asteroid>, response: Response<Asteroid>) {
-                _asResponse.value =  response.message()
-            }
-
-            override fun onFailure(call: Call<Asteroid>, t: Throwable) {
-                _asResponse.value = " Failure" + t.message
-            }
-
-        })
-        _asResponse.value = "Set the Asteroid Response here."
-    }
-
-
 }

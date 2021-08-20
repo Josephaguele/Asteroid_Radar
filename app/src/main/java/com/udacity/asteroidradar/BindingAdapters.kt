@@ -4,8 +4,29 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.net.toUri
 import androidx.databinding.BindingAdapter
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 
+/*add a bindRecyclerView binding adapter for listData, and have it call submitList() on the PhotosGridAdapter:*/
+/**
+ * When there is no Mars property data (data is null), hide the [RecyclerView], otherwise show it.
+ */
+
+
+@BindingAdapter("imageUrl")
+fun bindImage(imgView: ImageView, imgUrl: String?) {
+    imgUrl?.let {
+        val imgUri = imgUrl.toUri().buildUpon().scheme("https").build()
+        Glide.with(imgView.context)
+            .load(imgUri)
+            .apply(
+                RequestOptions()
+                    .placeholder(R.drawable.placeholder_picture_of_day)
+                    .error(R.drawable.placeholder_picture_of_day))
+            .into(imgView)
+    }
+}
 
 @BindingAdapter("statusIcon")
 fun bindAsteroidStatusImage(imageView: ImageView, isHazardous: Boolean) {

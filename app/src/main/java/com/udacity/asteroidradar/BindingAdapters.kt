@@ -13,6 +13,11 @@ import com.bumptech.glide.request.RequestOptions
  * When there is no Mars property data (data is null), hide the [RecyclerView], otherwise show it.
  */
 
+@BindingAdapter("listData")
+fun bindRecyclerView(recyclerView: RecyclerView, data: List<Asteroid>?){
+    val adapter = recyclerView.adapter as AsteroidGridAdapter
+    adapter.submitList(data)
+}
 
 @BindingAdapter("imageUrl")
 fun bindImage(imgView: ImageView, imgUrl: String?) {

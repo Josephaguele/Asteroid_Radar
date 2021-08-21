@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.udacity.asteroidradar.AsteroidGridAdapter
 import com.udacity.asteroidradar.R
 import com.udacity.asteroidradar.databinding.FragmentMainBinding
 
@@ -20,6 +21,8 @@ class MainFragment : Fragment() {
 
         binding.viewModel = viewModel
 
+        // Sets the adapter of the photosGrid RecyclerView
+        binding.asteroidRecycler.adapter = AsteroidGridAdapter()
         setHasOptionsMenu(true)
 
         return binding.root

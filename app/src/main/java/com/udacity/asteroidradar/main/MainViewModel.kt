@@ -55,20 +55,38 @@ class MainViewModel : ViewModel() {
         _response.value = "Set the api response here."
     }
 
-    
+
     private fun getAsteroids()
     {
-        NasaAsteroidsApi.retrofitService.getAsteroidList().enqueue(object : Callback<String>{
-            override fun onResponse(call: Call<String>, response: Response<String>) {
-                if (response.body() !== null) {
-                    val result = JSONObject(response.body())
-                    _asteroids.value = parseAsteroidsJsonResult(result)
+        val currentTime=Calendar.getInstance().time
+
+        //get seven days from the current date
+        val calendar=Calendar.getInstance().time;//this would default to now
+        Log.i("DATE MATTERS",calendar.toString())//just checking the date format in the Logcat
+
+        val today=LocalDateTime.now()
+        val nextSevenDays=today.plusDays(7)
+        Log.i("NEXT SEVEN DAYS",nextSevenDays.toString().substring(0,10))
+        val sevenDaysFromToday=nextSevenDays.toString().substring(0,10)
+
+
+        //puts date in your local time in the format stated in the Constants object which is:YYYY-MM-dd
+        val dateFormat=SimpleDateFormat(Constants.API_QUERY_DATE_FORMAT,Locale.getDefault())
+
+        NasaAsteroidsApi.retrofitService.getAsteroidList(
+            dateFormat.format(currentTime),sevenDaysFromToday,Constants.API_KEY).enqueue(object:Callback<String>{
+            override fun onResponse(call:Call<String>,response:Response<String>){
+                if(response.body()!==null){
+                    val result=JSONObject(response.body())
+                    _asteroids.value=parseAsteroidsJsonResult(result)
                 }
             }
-            override fun onFailure(call: Call<String>, t: Throwable) {
-                _response.value = "Failure:"+t.message
+            override fun onFailure(call:Call<String>,t:Throwable){
+                _response.value="Failure:"+t.message
             }
         })
     }
+
+
 
 }

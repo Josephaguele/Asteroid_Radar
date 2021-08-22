@@ -36,8 +36,10 @@ interface NasaApiService
       fun getProperties():
             Call<PictureOfDay> // The call object is used to start the request
 
-    @GET("neo/rest/v1/feed?start_date=2021-08-22&end_date=2021-08-29&api_key=NsCl1Qk3r4AR4jJJRhoxeedCshoxZX3062B4B2lI")
-     fun getAsteroidList():
+      @GET("neo/rest/v1/feed")
+    fun getAsteroidList(@Query("start_date")startDate:String,
+                        @Query("end_date")endDate:String,
+                        @Query("api_key")apiKey:String):
             Call<String>
 }
 

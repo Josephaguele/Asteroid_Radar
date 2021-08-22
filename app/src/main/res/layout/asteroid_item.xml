@@ -29,11 +29,11 @@
             app:layout_constraintStart_toStartOf="parent"
             android:text="@{oneasteroid.codename}"
             android:layout_marginBottom="12dp"
-            app:layout_constraintBottom_toTopOf="@id/asteroid_distance"
+            app:layout_constraintBottom_toTopOf="@id/close_approach_date"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/asteroid_distance"
+            android:id="@+id/close_approach_date"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"

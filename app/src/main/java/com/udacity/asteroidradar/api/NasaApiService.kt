@@ -1,4 +1,5 @@
 package com.udacity.asteroidradar.api
+import androidx.lifecycle.LiveData
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import com.udacity.asteroidradar.Asteroid
@@ -33,8 +34,7 @@ private val retrofitAsteroid = Retrofit.Builder()
 interface NasaApiService
 {
     @GET("planetary/apod?api_key=NsCl1Qk3r4AR4jJJRhoxeedCshoxZX3062B4B2lI")
-      fun getProperties():
-            Call<PictureOfDay> // The call object is used to start the request
+       fun getProperties(): PictureOfDay // The call object is used to start the request
 
       @GET("neo/rest/v1/feed")
     fun getAsteroidList(@Query("start_date")startDate:String,

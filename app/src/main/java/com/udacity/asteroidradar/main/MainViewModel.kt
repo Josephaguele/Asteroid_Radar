@@ -3,12 +3,14 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.udacity.asteroidradar.Asteroid
 import com.udacity.asteroidradar.Constants
 import com.udacity.asteroidradar.PictureOfDay
 import com.udacity.asteroidradar.api.NasaApi
 import com.udacity.asteroidradar.api.NasaAsteroidsApi
 import com.udacity.asteroidradar.api.parseAsteroidsJsonResult
+import kotlinx.coroutines.launch
 import org.joda.time.LocalDateTime
 
 import org.json.JSONObject
@@ -42,7 +44,7 @@ class MainViewModel : ViewModel() {
         getAsteroids()
 
     }
-    private fun getResponse()
+   /* private fun getResponse()
     {
         NasaApi.retrofitService.getProperties().enqueue(object : Callback<PictureOfDay> {
             override fun onResponse(call: Call<PictureOfDay>, response: Response<PictureOfDay>) {
@@ -53,7 +55,20 @@ class MainViewModel : ViewModel() {
             }
         })
         _response.value = "Set the api response here."
+    }*/
+
+    private fun getResponse()
+    {
+        viewModelScope.launch {
+            try{
+                val result = NasaApi.retrofitService.getProperties()
+                Log.i("I AM ANGRY:", result.toString())
+                _pictureOfTheDay.value = result
+            }   catch (e:Exception)
+            {_response.value = "Failure" + e.message   }
+        }
     }
+
 
 
     private fun getAsteroids()

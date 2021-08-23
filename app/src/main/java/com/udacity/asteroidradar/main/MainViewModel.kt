@@ -71,7 +71,7 @@ class MainViewModel : ViewModel() {
 
 
 
-    private fun getAsteroids()
+  /*  private fun getAsteroids()
     {
         val currentTime=Calendar.getInstance().time
 
@@ -100,6 +100,35 @@ class MainViewModel : ViewModel() {
                 _response.value="Failure:"+t.message
             }
         })
+    }
+*/
+    private fun getAsteroids()
+  {
+      val currentTime=Calendar.getInstance().time
+
+      //get seven days from the current date
+      val calendar=Calendar.getInstance().time;//this would default to now
+      Log.i("DATE MATTERS",calendar.toString())//just checking the date format in the Logcat
+
+      val today=LocalDateTime.now()
+      val nextSevenDays=today.plusDays(7)
+      Log.i("NEXT SEVEN DAYS",nextSevenDays.toString().substring(0,10))
+      val sevenDaysFromToday=nextSevenDays.toString().substring(0,10)
+
+      //puts date in your local time in the format stated in the Constants object which is:YYYY-MM-dd
+      val dateFormat=SimpleDateFormat(Constants.API_QUERY_DATE_FORMAT,Locale.getDefault())
+
+      viewModelScope.launch {
+          val asteroidList =  NasaAsteroidsApi.retrofitService.
+          getAsteroidList(dateFormat.format(currentTime),sevenDaysFromToday,Constants.API_KEY)
+          if(asteroidList !== null)
+          {
+              val result =JSONObject(asteroidList)
+              _asteroids.value = parseAsteroidsJsonResult(result)
+          } else
+              _response.value = "Failure"
+      }
+
     }
 
 

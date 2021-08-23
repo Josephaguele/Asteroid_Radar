@@ -34,13 +34,12 @@ private val retrofitAsteroid = Retrofit.Builder()
 interface NasaApiService
 {
     @GET("planetary/apod?api_key=NsCl1Qk3r4AR4jJJRhoxeedCshoxZX3062B4B2lI")
-       fun getProperties(): PictureOfDay // The call object is used to start the request
+    suspend fun getProperties(): PictureOfDay // The call object is used to start the request
 
       @GET("neo/rest/v1/feed")
-    fun getAsteroidList(@Query("start_date")startDate:String,
+    suspend fun getAsteroidList(@Query("start_date")startDate:String,
                         @Query("end_date")endDate:String,
-                        @Query("api_key")apiKey:String):
-            Call<String>
+                        @Query("api_key")apiKey:String): String
 }
 
 // To create a retrofit service, we call retrofit.create passing in the service api we just defined.

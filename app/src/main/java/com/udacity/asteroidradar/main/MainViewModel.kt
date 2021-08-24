@@ -1,4 +1,5 @@
 package com.udacity.asteroidradar.main
+
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -12,29 +13,23 @@ import com.udacity.asteroidradar.api.NasaAsteroidsApi
 import com.udacity.asteroidradar.api.parseAsteroidsJsonResult
 import kotlinx.coroutines.launch
 import org.joda.time.LocalDateTime
-
 import org.json.JSONObject
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
 
-
 class MainViewModel : ViewModel() {
-
-    private val _response = MutableLiveData<String>()
-    val response: LiveData<String>
-        get() = _response
+    enum class NasaApiStatus {  ERROR, DONE }
+    private val _status = MutableLiveData<NasaApiStatus>()
+    val status: LiveData<NasaApiStatus>
+        get() = _status
 
     private val _pictureOfTheDay = MutableLiveData<PictureOfDay>()
     val pictureOfDay: LiveData<PictureOfDay>
-    get() = _pictureOfTheDay
+        get() = _pictureOfTheDay
 
     private val _asteroids = MutableLiveData<List<Asteroid>>()
     val asteroids: LiveData<List<Asteroid>>
-    get() = _asteroids
+        get() = _asteroids
 
     /**
      * Call methods() on init so we can display status immediately.
@@ -44,46 +39,49 @@ class MainViewModel : ViewModel() {
         getAsteroids()
     }
 
-    private fun getPictureOfToday()
-    {
+    private fun getPictureOfToday() {
         viewModelScope.launch {
-            try{
+            try {
                 val result = NasaApi.retrofitService.getProperties()
-                _pictureOfTheDay.value = result
-            }   catch (e:Exception)
-            {_response.value = "Failure" + e.message   }
+                    _pictureOfTheDay.value = result
+                // when there is  internet connection, the user is shown the data generated
+                _status.value = NasaApiStatus.DONE
+            } catch (e: Exception) {
+                // when there is no internet connection, the user is shown the error image
+                _status.value = NasaApiStatus.ERROR
+            }
         }
     }
 
 
-    private fun getAsteroids()
-  {
-      val currentTime=Calendar.getInstance().time
+    private fun getAsteroids() {
+        val currentTime = Calendar.getInstance().time
 
-      //get seven days from the current date
-      val calendar=Calendar.getInstance().time;//this would default to now
-      Log.i("DATE MATTERS",calendar.toString())//just checking the date format in the Logcat
+        //get seven days from the current date
+        val calendar = Calendar.getInstance().time//this would default to now
+        Log.i("DATE MATTERS", calendar.toString())//just checking the date format in the Logcat
 
-      val today=LocalDateTime.now()
-      val nextSevenDays=today.plusDays(7)
-      Log.i("NEXT SEVEN DAYS",nextSevenDays.toString().substring(0,10))
-      val sevenDaysFromToday=nextSevenDays.toString().substring(0,10)
+        val today = LocalDateTime.now()
+        val nextSevenDays = today.plusDays(7)
+        Log.i("NEXT SEVEN DAYS", nextSevenDays.toString().substring(0, 10))
+        val sevenDaysFromToday = nextSevenDays.toString().substring(0, 10)
 
-      //puts date in your local time in the format stated in the Constants object which is:YYYY-MM-dd
-      val dateFormat=SimpleDateFormat(Constants.API_QUERY_DATE_FORMAT,Locale.getDefault())
+        //puts date in your local time in the format stated in the Constants object which is:YYYY-MM-dd
+        val dateFormat = SimpleDateFormat(Constants.API_QUERY_DATE_FORMAT, Locale.getDefault())
 
-      viewModelScope.launch {
-          val asteroidList =  NasaAsteroidsApi.retrofitService.
-          getAsteroidList(dateFormat.format(currentTime),sevenDaysFromToday,Constants.API_KEY)
-          if(asteroidList !== null)
-          {
-              val result =JSONObject(asteroidList)
-              _asteroids.value = parseAsteroidsJsonResult(result)
-          } else
-              _response.value = "Failure"
-      }
+        viewModelScope.launch {
+            try{
+                val asteroidList = NasaAsteroidsApi.retrofitService.getAsteroidList(
+                    dateFormat.format(currentTime),
+                    sevenDaysFromToday,
+                    Constants.API_KEY
+                )
+                if (asteroidList !== null) {
+                    val result = JSONObject(asteroidList)
+                    _asteroids.value = parseAsteroidsJsonResult(result)
+                }
+            }catch (e:Exception){ _status.value = NasaApiStatus.ERROR}
+        }
     }
-
-
 
 }

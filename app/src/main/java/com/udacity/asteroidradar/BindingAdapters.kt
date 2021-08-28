@@ -3,6 +3,7 @@ package com.udacity.asteroidradar
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.VideoView
 import androidx.core.net.toUri
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -31,6 +32,7 @@ fun bindStatus(statusImageView: ImageView, status: MainViewModel.NasaApiStatus?)
         }
     }
 }
+
 @BindingAdapter("listData")
 fun bindRecyclerView(recyclerView: RecyclerView, data: List<Asteroid>?){
     val adapter = recyclerView.adapter as AsteroidGridAdapter
@@ -46,10 +48,12 @@ fun bindImage(imgView: ImageView, imgUrl: String?) {
             .apply(
                 RequestOptions()
                     .placeholder(R.drawable.placeholder_picture_of_day)
-                    .error(R.drawable.ic_connection_error))
+                    .error(R.drawable.placeholder_picture_of_day))
             .into(imgView)
     }
 }
+
+
 
 @BindingAdapter("statusIcon")
 fun bindAsteroidStatusImage(imageView: ImageView, isHazardous: Boolean) {

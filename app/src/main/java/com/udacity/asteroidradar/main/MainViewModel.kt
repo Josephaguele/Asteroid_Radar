@@ -1,5 +1,6 @@
 package com.udacity.asteroidradar.main
 
+
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -17,12 +18,15 @@ import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.*
 
+
 class MainViewModel : ViewModel() {
+
     enum class NasaApiStatus {  ERROR, DONE }
     private val _status = MutableLiveData<NasaApiStatus>()
     val status: LiveData<NasaApiStatus>
         get() = _status
 
+    //
     private val _pictureOfTheDay = MutableLiveData<PictureOfDay>()
     val pictureOfDay: LiveData<PictureOfDay>
         get() = _pictureOfTheDay
@@ -30,6 +34,11 @@ class MainViewModel : ViewModel() {
     private val _asteroids = MutableLiveData<List<Asteroid>>()
     val asteroids: LiveData<List<Asteroid>>
         get() = _asteroids
+
+    // for navigating to selected asteroid detail screen
+    private val _navigateToSelectedAsteroid = MutableLiveData<Asteroid>()
+    val navigateToSelectedProperty : LiveData<Asteroid>
+    get() = _navigateToSelectedAsteroid
 
     /**
      * Call methods() on init so we can display status immediately.
@@ -39,13 +48,27 @@ class MainViewModel : ViewModel() {
         getAsteroids()
     }
 
+    /* function to set _navigateToSelectedAsteroid to asteroid and initiate navigation to
+     the detail screen on button click:*/
+    fun displayAsteroidDetails(asteroid: Asteroid)
+    {
+        _navigateToSelectedAsteroid.value = asteroid
+    }
+
+    /* to displayAsteroidDetailsComplete, we set _navigateToSelectedAsteroid to false once navigation
+     is completed to prevent unwanted extra navigation.*/
+    fun displayAsteroidDetailsComplete()
+    {
+        _navigateToSelectedAsteroid.value = null
+    }
+
     private fun getPictureOfToday() {
         viewModelScope.launch {
             try {
                 val result = NasaApi.retrofitService.getProperties()
-                    _pictureOfTheDay.value = result
+                _pictureOfTheDay.value = result
                 // when there is  internet connection, the user is shown the data generated
-                _status.value = NasaApiStatus.DONE
+
             } catch (e: Exception) {
                 // when there is no internet connection, the user is shown the error image
                 _status.value = NasaApiStatus.ERROR

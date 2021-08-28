@@ -28,9 +28,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:adjustViewBounds="true"
+                android:contentDescription="@string/nasa_picture_of_day_content_description_format"
                 android:scaleType="centerCrop"
                 app:imageUrl="@{viewModel.pictureOfDay.url}"
                 app:srcCompat="@drawable/placeholder_picture_of_day"/>
+
 <!-- just testing the data generation with two textviews here -->
             <TextView
                 android:id="@+id/textView2"
@@ -64,6 +66,7 @@
         <ImageView
             android:id="@+id/status_image"
             android:layout_width="0dp"
+            android:contentDescription="@string/no_internet_message"
             android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"

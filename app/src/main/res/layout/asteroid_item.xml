@@ -20,6 +20,8 @@
         <TextView
             android:id="@+id/asteroid_name"
             android:layout_width="match_parent"
+            android:textSize="18sp"
+            android:textStyle="bold"
             android:layout_height="wrap_content"
             android:textColor="#FFFFFF"
             android:layout_marginStart="16dp"
@@ -28,7 +30,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             android:text="@{oneasteroid.codename}"
-            android:layout_marginBottom="12dp"
+            android:layout_marginBottom="4dp"
             app:layout_constraintBottom_toTopOf="@id/close_approach_date"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -36,7 +38,7 @@
             android:id="@+id/close_approach_date"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="4dp"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             android:text="@{oneasteroid.closeApproachDate}"

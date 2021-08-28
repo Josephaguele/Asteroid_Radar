@@ -21,10 +21,12 @@ class DetailFragment : Fragment() {
         val asteroid = DetailFragmentArgs.fromBundle(requireArguments()).selectedAsteroid
         val viewModelFactory = DetailViewModelFactory(asteroid,application)
 
+        // use the factory to create a DetailViewModel and bind it to the ViewModel
         binding.asteroid = ViewModelProvider(
             this, viewModelFactory).get(DetailViewModel::class.java)
 
 
+        // onClickListener for the help button in the details fragment
         binding.helpButton.setOnClickListener {
             displayAstronomicalUnitExplanationDialog()
         }

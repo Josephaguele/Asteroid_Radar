@@ -1,11 +1,10 @@
 package com.udacity.asteroidradar.detail
 
 import android.app.Application
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
 import com.udacity.asteroidradar.Asteroid
+import org.joda.time.LocalDateTime
+import java.util.*
 
 class DetailViewModel(asteroidProperty: Asteroid, app: Application) : AndroidViewModel(app)
 {
@@ -17,6 +16,17 @@ class DetailViewModel(asteroidProperty: Asteroid, app: Application) : AndroidVie
     init {
         _selectedAsteroid.value = asteroidProperty
     }
+
+    /*val displayTodayAsteroid = Transformations.map(selectedAsteroid)
+    {
+        var currentTime = Calendar.getInstance().time
+        var today = currentTime
+
+        return@map today
+
+
+    }*/
+
 
 
 }

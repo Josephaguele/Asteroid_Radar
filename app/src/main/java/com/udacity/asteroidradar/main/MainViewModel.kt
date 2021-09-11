@@ -10,6 +10,7 @@ import com.udacity.asteroidradar.Asteroid
 import com.udacity.asteroidradar.Constants
 import com.udacity.asteroidradar.PictureOfDay
 import com.udacity.asteroidradar.api.NasaApi
+import com.udacity.asteroidradar.api.NasaApiFilter
 import com.udacity.asteroidradar.api.NasaAsteroidsApi
 import com.udacity.asteroidradar.api.parseAsteroidsJsonResult
 import kotlinx.coroutines.launch
@@ -19,7 +20,8 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-class MainViewModel : ViewModel() {
+class MainViewModel : ViewModel()
+{
 
     enum class NasaApiStatus {  ERROR, DONE }
     private val _status = MutableLiveData<NasaApiStatus>()
@@ -77,6 +79,7 @@ class MainViewModel : ViewModel() {
     }
 
 
+
     private fun getAsteroids() {
         val currentTime = Calendar.getInstance().time
 
@@ -105,6 +108,11 @@ class MainViewModel : ViewModel() {
                 }
             }catch (e:Exception){ _status.value = NasaApiStatus.ERROR}
         }
+    }
+
+    private fun getNasaApiFilter(start_date:NasaApiFilter)
+    {
+
     }
 
 }

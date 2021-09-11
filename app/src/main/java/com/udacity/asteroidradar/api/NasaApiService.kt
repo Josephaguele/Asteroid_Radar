@@ -53,3 +53,4 @@ object NasaAsteroidsApi
 {
     val retrofitService:NasaApiService by lazy { retrofitAsteroid.create(NasaApiService::class.java)}
 }
+enum class NasaApiFilter(val value: String) { START_DATE("start_date"), END_DATE("end_date") }

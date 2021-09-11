@@ -1,6 +1,9 @@
 package com.udacity.asteroidradar.repository
 
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Transformations
+import com.udacity.asteroidradar.Asteroid
 import com.udacity.asteroidradar.Constants
 import com.udacity.asteroidradar.Constants.API_KEY
 import com.udacity.asteroidradar.Constants.currentTime
@@ -9,6 +12,7 @@ import com.udacity.asteroidradar.Constants.sevenDaysFromToday
 import com.udacity.asteroidradar.api.NasaAsteroidsApi
 import com.udacity.asteroidradar.asDatabaseModel
 import com.udacity.asteroidradar.database.AsteroidsDatabase
+import com.udacity.asteroidradar.database.asDomainModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -18,6 +22,14 @@ import kotlinx.coroutines.withContext
 
 class AsteroidsRepository (private val database: AsteroidsDatabase)
 {
+    // we use Transformation.map to convert our LiveData list of DatabaseAsteroid objects to
+    // domain Asteroid objects.
+    val asteroids: LiveData<List<Asteroid>> =
+        Transformations.map(database.asteroidDao.getAsteroids()){
+            it.asDomainModel()
+        }
+
+
     suspend fun refreshVideos()
     {// Get the data from the network and put it in the database
         withContext(Dispatchers.IO)

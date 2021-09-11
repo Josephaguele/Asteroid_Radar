@@ -8,11 +8,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.udacity.asteroidradar.Asteroid
 import com.udacity.asteroidradar.Constants
+import com.udacity.asteroidradar.Constants.currentTime
+import com.udacity.asteroidradar.Constants.dateFormat
+import com.udacity.asteroidradar.Constants.sevenDaysFromToday
 import com.udacity.asteroidradar.PictureOfDay
 import com.udacity.asteroidradar.api.NasaApi
 import com.udacity.asteroidradar.api.NasaApiFilter
 import com.udacity.asteroidradar.api.NasaAsteroidsApi
 import com.udacity.asteroidradar.api.parseAsteroidsJsonResult
+import com.udacity.asteroidradar.database.getDatabase
 import kotlinx.coroutines.launch
 import org.joda.time.LocalDateTime
 import org.json.JSONObject
@@ -81,7 +85,7 @@ class MainViewModel : ViewModel()
 
 
     private fun getAsteroids() {
-        val currentTime = Calendar.getInstance().time
+        /*val currentTime = Calendar.getInstance().time
 
         //get seven days from the current date
         val calendar = Calendar.getInstance().time//this would default to now
@@ -94,6 +98,7 @@ class MainViewModel : ViewModel()
 
         //puts date in your local time in the format stated in the Constants object which is:YYYY-MM-dd
         val dateFormat = SimpleDateFormat(Constants.API_QUERY_DATE_FORMAT, Locale.getDefault())
+*/
 
         viewModelScope.launch {
             try{
@@ -108,11 +113,6 @@ class MainViewModel : ViewModel()
                 }
             }catch (e:Exception){ _status.value = NasaApiStatus.ERROR}
         }
-    }
-
-    private fun getNasaApiFilter(start_date:NasaApiFilter)
-    {
-
     }
 
 }

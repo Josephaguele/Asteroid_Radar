@@ -10,7 +10,7 @@ import com.udacity.asteroidradar.Constants.currentTime
 import com.udacity.asteroidradar.Constants.dateFormat
 import com.udacity.asteroidradar.Constants.sevenDaysFromToday
 import com.udacity.asteroidradar.api.NasaAsteroidsApi
-import com.udacity.asteroidradar.asDatabaseModel
+import com.udacity.asteroidradar.database.asDatabaseModel
 import com.udacity.asteroidradar.database.AsteroidsDatabase
 import com.udacity.asteroidradar.database.asDomainModel
 import kotlinx.coroutines.Dispatchers

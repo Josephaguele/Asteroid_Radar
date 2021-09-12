@@ -1,11 +1,9 @@
 package com.udacity.asteroidradar.main
 
 
+import android.app.Application
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.udacity.asteroidradar.Asteroid
 import com.udacity.asteroidradar.Constants
 import com.udacity.asteroidradar.Constants.currentTime
@@ -17,6 +15,7 @@ import com.udacity.asteroidradar.api.NasaApiFilter
 import com.udacity.asteroidradar.api.NasaAsteroidsApi
 import com.udacity.asteroidradar.api.parseAsteroidsJsonResult
 import com.udacity.asteroidradar.database.getDatabase
+import com.udacity.asteroidradar.repository.AsteroidsRepository
 import kotlinx.coroutines.launch
 import org.joda.time.LocalDateTime
 import org.json.JSONObject
@@ -24,8 +23,10 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-class MainViewModel : ViewModel()
+class MainViewModel(application: Application) : AndroidViewModel(application)
 {
+    private val database = getDatabase(application)
+    private val asteroidsRepository = AsteroidsRepository(database)
 
     enum class NasaApiStatus {  ERROR, DONE }
     private val _status = MutableLiveData<NasaApiStatus>()
@@ -51,8 +52,9 @@ class MainViewModel : ViewModel()
      */
     init {
         getPictureOfToday()
-        getAsteroids()
+        viewModelScope.launch { asteroidsRepository.refreshVideos() }
     }
+
 
     /* function to set _navigateToSelectedAsteroid to asteroid and initiate navigation to
      the detail screen on button click:*/
@@ -83,9 +85,9 @@ class MainViewModel : ViewModel()
     }
 
 
-
+/*
     private fun getAsteroids() {
-        /*val currentTime = Calendar.getInstance().time
+        *//*val currentTime = Calendar.getInstance().time
 
         //get seven days from the current date
         val calendar = Calendar.getInstance().time//this would default to now
@@ -98,7 +100,7 @@ class MainViewModel : ViewModel()
 
         //puts date in your local time in the format stated in the Constants object which is:YYYY-MM-dd
         val dateFormat = SimpleDateFormat(Constants.API_QUERY_DATE_FORMAT, Locale.getDefault())
-*/
+*//*
 
         viewModelScope.launch {
             try{
@@ -113,6 +115,16 @@ class MainViewModel : ViewModel()
                 }
             }catch (e:Exception){ _status.value = NasaApiStatus.ERROR}
         }
-    }
+    }*/
 
+/*    //Factory for constructing MainViewModel with parameter
+    class Factory(val app: Application): ViewModelProvider.Factory{
+        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+            if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
+                @Suppress("UNCHECKED_CAST")
+                return MainViewModel(app) as T
+            }
+            throw IllegalArgumentException("Unable to construct viewmodel")
+        }
+    }*/
 }

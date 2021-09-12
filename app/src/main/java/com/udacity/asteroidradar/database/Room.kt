@@ -15,7 +15,7 @@ interface  AsteroidDao{
     fun insertAll(vararg asteroids: DatabaseAsteroid)
 }
 
-@Database(entities = [DatabaseAsteroid::class], version = 0)
+@Database(entities = [DatabaseAsteroid::class], version = 1)
 abstract class AsteroidsDatabase : RoomDatabase()
 { // add an abstract asteroidDao variable
    abstract val asteroidDao : AsteroidDao

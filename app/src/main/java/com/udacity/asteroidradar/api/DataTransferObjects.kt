@@ -21,9 +21,10 @@ import com.udacity.asteroidradar.database.DatabaseAsteroid
  */
 
 @JsonClass(generateAdapter = true)
-data class NetworkAsteroidContainer(val asteroids: List<Asteroid>)
+data class NetworkAsteroidContainer(val asteroids: List<NetworkAsteroid>)
 
 /*Asteroids represent an asteroid that can be clicked*/
+@JsonClass(generateAdapter = true)
 data class NetworkAsteroid(
     val id: Long,
     val codename: String,

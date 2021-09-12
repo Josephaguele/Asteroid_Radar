@@ -55,6 +55,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application)
         viewModelScope.launch { asteroidsRepository.refreshVideos() }
     }
 
+    val asteroidlist = asteroidsRepository.asteroids
 
     /* function to set _navigateToSelectedAsteroid to asteroid and initiate navigation to
      the detail screen on button click:*/

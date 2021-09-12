@@ -2,11 +2,8 @@ package com.udacity.asteroidradar.api
 import androidx.lifecycle.LiveData
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import com.udacity.asteroidradar.Asteroid
-import com.udacity.asteroidradar.Constants
+import com.udacity.asteroidradar.*
 import com.udacity.asteroidradar.Constants.BASE_URL
-import com.udacity.asteroidradar.NetworkAsteroidContainer
-import com.udacity.asteroidradar.PictureOfDay
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Retrofit
@@ -40,7 +37,7 @@ interface NasaApiService
       @GET("neo/rest/v1/feed")
     suspend fun getAsteroidList(@Query("start_date")startDate:String,
                         @Query("end_date")endDate:String,
-                        @Query("api_key")apiKey:String): NetworkAsteroidContainer
+                        @Query("api_key")apiKey:String): String
 }
 
 // To create a retrofit service, we call retrofit.create passing in the service api we just defined.

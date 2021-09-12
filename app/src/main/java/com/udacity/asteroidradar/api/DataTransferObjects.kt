@@ -26,13 +26,9 @@ data class NetworkAsteroidContainer(val asteroids: List<NetworkAsteroid>)
 /*Asteroids represent an asteroid that can be clicked*/
 @JsonClass(generateAdapter = true)
 data class NetworkAsteroid(
-    val id: Long,
-    val codename: String,
-    val closeApproachDate: String,
-    val absoluteMagnitude: Double,
-    val estimatedDiameter: Double,
-    val relativeVelocity: Double,
-    val distanceFromEarth: Double,
+    val id: Long, val codename: String, val closeApproachDate: String,
+    val absoluteMagnitude: Double, val estimatedDiameter: Double,
+    val relativeVelocity: Double, val distanceFromEarth: Double,
     val isPotentiallyHazardous: Boolean
 )
 

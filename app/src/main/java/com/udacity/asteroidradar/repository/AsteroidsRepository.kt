@@ -4,17 +4,17 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
 import com.udacity.asteroidradar.Asteroid
-import com.udacity.asteroidradar.Constants
 import com.udacity.asteroidradar.Constants.API_KEY
 import com.udacity.asteroidradar.Constants.currentTime
 import com.udacity.asteroidradar.Constants.dateFormat
 import com.udacity.asteroidradar.Constants.sevenDaysFromToday
 import com.udacity.asteroidradar.api.NasaAsteroidsApi
-import com.udacity.asteroidradar.database.asDatabaseModel
+import com.udacity.asteroidradar.api.parseAsteroidsJsonResult
 import com.udacity.asteroidradar.database.AsteroidsDatabase
 import com.udacity.asteroidradar.database.asDomainModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.util.*
@@ -36,26 +36,14 @@ class AsteroidsRepository (private val database: AsteroidsDatabase)
     suspend fun refreshVideos()
     {// Get the data from the network and put it in the database
 
-        val currentTime = Calendar.getInstance().time
-
-        //get seven days from the current date
-        val calendar = Calendar.getInstance().time//this would default to now
-        Log.i("DATE MATTERS", calendar.toString())//just checking the date format in the Logcat
-
-        val today = LocalDateTime.now()
-        val nextSevenDays = today.plusDays(7)
-        Log.i("NEXT SEVEN DAYS", nextSevenDays.toString().substring(0, 10))
-        val sevenDaysFromToday = nextSevenDays.toString().substring(0, 10)
-
-        //puts date in your local time in the format stated in the Constants object which is:YYYY-MM-dd
-        val dateFormat = SimpleDateFormat(Constants.API_QUERY_DATE_FORMAT, Locale.getDefault())
 
         withContext(Dispatchers.IO)
         {
             try {
-                val asteroidList = NasaAsteroidsApi.retrofitService.getAsteroidList(  dateFormat.format(currentTime), sevenDaysFromToday, API_KEY)
-                database.asteroidDao.insertAll(*asteroidList.asDatabaseModel())
-            } catch (e: Exception) { Log.i("MESSAGE","Updated asteroids not available")
+                val asteroidList = parseAsteroidsJsonResult(JSONObject(NasaAsteroidsApi.retrofitService.getAsteroidList(  dateFormat.format(currentTime), sevenDaysFromToday, API_KEY)))
+                database.asteroidDao.insertAll(asteroidList)
+            } catch (e: Exception) {e.printStackTrace()
+                Log.i("MESSAGE","Updated asteroids not available")
             }
         }
 

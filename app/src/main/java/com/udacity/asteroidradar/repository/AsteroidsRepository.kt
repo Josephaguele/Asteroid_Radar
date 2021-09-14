@@ -8,16 +8,15 @@ import com.udacity.asteroidradar.Constants.API_KEY
 import com.udacity.asteroidradar.Constants.currentTime
 import com.udacity.asteroidradar.Constants.dateFormat
 import com.udacity.asteroidradar.Constants.sevenDaysFromToday
+import com.udacity.asteroidradar.NetworkAsteroidContainer
 import com.udacity.asteroidradar.api.NasaAsteroidsApi
 import com.udacity.asteroidradar.api.parseAsteroidsJsonResult
+import com.udacity.asteroidradar.asDatabaseModel
 import com.udacity.asteroidradar.database.AsteroidsDatabase
 import com.udacity.asteroidradar.database.asDomainModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
-import java.text.SimpleDateFormat
-import java.time.LocalDateTime
-import java.util.*
 
 /*A repository is a just simple class responsible for providing an interface to our
 * data classes
@@ -41,7 +40,8 @@ class AsteroidsRepository (private val database: AsteroidsDatabase)
         {
             try {
                 val asteroidList = parseAsteroidsJsonResult(JSONObject(NasaAsteroidsApi.retrofitService.getAsteroidList(  dateFormat.format(currentTime), sevenDaysFromToday, API_KEY)))
-                database.asteroidDao.insertAll(asteroidList)
+                val data = NetworkAsteroidContainer(asteroidList).asDatabaseModel()
+                database.asteroidDao.insertAll(data)
             } catch (e: Exception) {e.printStackTrace()
                 Log.i("MESSAGE","Updated asteroids not available")
             }

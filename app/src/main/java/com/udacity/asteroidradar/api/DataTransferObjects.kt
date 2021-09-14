@@ -21,7 +21,7 @@ import com.udacity.asteroidradar.database.DatabaseAsteroid
  */
 
 @JsonClass(generateAdapter = true)
-data class NetworkAsteroidContainer(val asteroids: List<NetworkAsteroid>)
+data class NetworkAsteroidContainer(val asteroids: ArrayList<Asteroid>)
 
 /*Asteroids represent an asteroid that can be clicked*/
 @JsonClass(generateAdapter = true)
@@ -49,7 +49,7 @@ fun NetworkAsteroidContainer.asDomainModel(): List<Asteroid> {
 }
 
 
-fun NetworkAsteroidContainer.asDatabaseModel():Array<DatabaseAsteroid> {
+fun NetworkAsteroidContainer.asDatabaseModel():List<DatabaseAsteroid> {
     return asteroids.map {
         DatabaseAsteroid(
             id = it.id,
@@ -60,5 +60,5 @@ fun NetworkAsteroidContainer.asDatabaseModel():Array<DatabaseAsteroid> {
             relativeVelocity = it.relativeVelocity,
             distanceFromEarth = it.distanceFromEarth,
             isPotentiallyHazardous = it.isPotentiallyHazardous)
-    }.toTypedArray()
+    }
 }

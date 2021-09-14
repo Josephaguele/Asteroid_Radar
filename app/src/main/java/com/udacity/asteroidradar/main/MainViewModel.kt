@@ -53,9 +53,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application)
     init {
         getPictureOfToday()
         viewModelScope.launch { asteroidsRepository.refreshVideos() }
-    }
 
-    val asteroidlist = asteroidsRepository.asteroids
+    }
+    val asteroid = asteroidsRepository.asteroids
 
     /* function to set _navigateToSelectedAsteroid to asteroid and initiate navigation to
      the detail screen on button click:*/

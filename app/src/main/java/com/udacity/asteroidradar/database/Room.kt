@@ -44,38 +44,5 @@ fun getDatabase(context: Context): AsteroidsDatabase
 }
 
 
-@Dao
-interface PictureDao{
-    @Query("select * from databasepictureoftheday")
-    fun getDatabasePictureOfTheDay(): LiveData<PictureOfDay>
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAll(pictures: DatabasePictureOfDay)
-}
 
 
-@Database(entities = [DatabasePictureOfDay::class], version = 1)
-abstract class PictureDatabase : RoomDatabase()
-{ // add an abstract pictureDao variable
-    abstract val pictureDao : PictureDao
-}
-
-// define an instance variable to store the singleton
-private lateinit var INSTANCE2 : PictureDatabase
-
-// deFINE a getDatabase function to return the PictureDatabase
-fun getPictureDatabase(context: Context): PictureDatabase
-{
-    // Check whether the database has been initialized, if it hasn't then initialize it
-    // we make the initialization thread safe by wrapping it up
-    synchronized(PictureDatabase::class.java)
-    {
-        if (!::INSTANCE2.isInitialized) {
-            INSTANCE2 = Room.databaseBuilder(context.applicationContext,
-                PictureDatabase::class.java,
-                "pictures").build()
-        }
-    }
-    return INSTANCE2
-
-}

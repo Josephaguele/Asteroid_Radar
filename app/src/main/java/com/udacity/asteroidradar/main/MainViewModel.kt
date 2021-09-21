@@ -2,31 +2,24 @@ package com.udacity.asteroidradar.main
 
 
 import android.app.Application
-import android.util.Log
+import android.os.Build
 import androidx.lifecycle.*
+import androidx.work.*
 import com.udacity.asteroidradar.Asteroid
-import com.udacity.asteroidradar.Constants
-import com.udacity.asteroidradar.Constants.currentTime
-import com.udacity.asteroidradar.Constants.dateFormat
-import com.udacity.asteroidradar.Constants.sevenDaysFromToday
 import com.udacity.asteroidradar.PictureOfDay
 import com.udacity.asteroidradar.api.NasaApi
-import com.udacity.asteroidradar.api.NasaApiFilter
-import com.udacity.asteroidradar.api.NasaAsteroidsApi
-import com.udacity.asteroidradar.api.parseAsteroidsJsonResult
 import com.udacity.asteroidradar.database.getDatabase
 import com.udacity.asteroidradar.repository.AsteroidsRepository
+import com.udacity.asteroidradar.worker.RefreshDataWork
 import kotlinx.coroutines.launch
-import org.joda.time.LocalDateTime
-import org.json.JSONObject
-import java.text.SimpleDateFormat
-import java.util.*
+import java.util.concurrent.TimeUnit
 
 
 class MainViewModel(application: Application) : AndroidViewModel(application)
 {
     private val database = getDatabase(application)
     private val asteroidsRepository = AsteroidsRepository(database)
+
 
     enum class NasaApiStatus {  ERROR, DONE }
     private val _status = MutableLiveData<NasaApiStatus>()
@@ -52,9 +45,34 @@ class MainViewModel(application: Application) : AndroidViewModel(application)
      */
     init {
         getPictureOfToday()
-        viewModelScope.launch { asteroidsRepository.refreshVideos() }
+        viewModelScope.launch {
+            asteroidsRepository.refreshAsteroids()
+            setUpRecurringWork()
+        }
 
     }
+
+    // Running Work with WorkManager
+    private fun setUpRecurringWork() {
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.UNMETERED)
+            .setRequiresBatteryNotLow(true)
+            .setRequiresCharging(true)
+            .apply {
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                {
+                    setRequiresDeviceIdle(true)
+                }
+            }.build()
+
+        val repeatingRequest = PeriodicWorkRequestBuilder<RefreshDataWork>(1, TimeUnit.DAYS)
+            .setConstraints(constraints).build()
+
+        WorkManager.getInstance().enqueueUniquePeriodicWork(
+            RefreshDataWork.WORK_NAME,
+            ExistingPeriodicWorkPolicy.KEEP,repeatingRequest)
+    }
+
     val asteroid = asteroidsRepository.asteroids
 
     /* function to set _navigateToSelectedAsteroid to asteroid and initiate navigation to
@@ -86,46 +104,4 @@ class MainViewModel(application: Application) : AndroidViewModel(application)
     }
 
 
-/*
-    private fun getAsteroids() {
-        *//*val currentTime = Calendar.getInstance().time
-
-        //get seven days from the current date
-        val calendar = Calendar.getInstance().time//this would default to now
-        Log.i("DATE MATTERS", calendar.toString())//just checking the date format in the Logcat
-
-        val today = LocalDateTime.now()
-        val nextSevenDays = today.plusDays(7)
-        Log.i("NEXT SEVEN DAYS", nextSevenDays.toString().substring(0, 10))
-        val sevenDaysFromToday = nextSevenDays.toString().substring(0, 10)
-
-        //puts date in your local time in the format stated in the Constants object which is:YYYY-MM-dd
-        val dateFormat = SimpleDateFormat(Constants.API_QUERY_DATE_FORMAT, Locale.getDefault())
-*//*
-
-        viewModelScope.launch {
-            try{
-                val asteroidList = NasaAsteroidsApi.retrofitService.getAsteroidList(
-                    dateFormat.format(currentTime),
-                    sevenDaysFromToday,
-                    Constants.API_KEY
-                )
-                if (asteroidList !== null) {
-                    val result = JSONObject(asteroidList)
-                    _asteroids.value = parseAsteroidsJsonResult(result)
-                }
-            }catch (e:Exception){ _status.value = NasaApiStatus.ERROR}
-        }
-    }*/
-
-/*    //Factory for constructing MainViewModel with parameter
-    class Factory(val app: Application): ViewModelProvider.Factory{
-        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
-                @Suppress("UNCHECKED_CAST")
-                return MainViewModel(app) as T
-            }
-            throw IllegalArgumentException("Unable to construct viewmodel")
-        }
-    }*/
 }

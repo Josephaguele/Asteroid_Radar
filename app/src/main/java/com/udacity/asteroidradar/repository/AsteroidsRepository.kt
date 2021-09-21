@@ -32,7 +32,7 @@ class AsteroidsRepository (private val database: AsteroidsDatabase)
         }
 
 
-    suspend fun refreshVideos()
+    suspend fun refreshAsteroids()
     {// Get the data from the network and put it in the database
 
 

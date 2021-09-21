@@ -1,5 +1,7 @@
 package com.udacity.asteroidradar
 
+import androidx.lifecycle.LiveData
+import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import com.udacity.asteroidradar.database.DatabaseAsteroid
 
@@ -23,6 +25,7 @@ import com.udacity.asteroidradar.database.DatabaseAsteroid
 @JsonClass(generateAdapter = true)
 data class NetworkAsteroidContainer(val asteroids: ArrayList<Asteroid>)
 
+
 /*Asteroids represent an asteroid that can be clicked*/
 @JsonClass(generateAdapter = true)
 data class NetworkAsteroid(
@@ -31,6 +34,7 @@ data class NetworkAsteroid(
     val relativeVelocity: Double, val distanceFromEarth: Double,
     val isPotentiallyHazardous: Boolean
 )
+
 
 // convert network results to database objects
 fun NetworkAsteroidContainer.asDomainModel(): List<Asteroid> {
@@ -49,6 +53,7 @@ fun NetworkAsteroidContainer.asDomainModel(): List<Asteroid> {
 }
 
 
+
 fun NetworkAsteroidContainer.asDatabaseModel():List<DatabaseAsteroid> {
     return asteroids.map {
         DatabaseAsteroid(
@@ -62,3 +67,4 @@ fun NetworkAsteroidContainer.asDatabaseModel():List<DatabaseAsteroid> {
             isPotentiallyHazardous = it.isPotentiallyHazardous)
     }
 }
+

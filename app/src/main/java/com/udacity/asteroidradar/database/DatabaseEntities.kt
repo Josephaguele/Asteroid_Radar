@@ -1,10 +1,12 @@
 package com.udacity.asteroidradar.database
 
+import androidx.lifecycle.Transformations.map
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.squareup.moshi.Json
 import com.udacity.asteroidradar.Asteroid
 import com.udacity.asteroidradar.NetworkAsteroidContainer
+import com.udacity.asteroidradar.PictureOfDay
 
 @Entity
 data class DatabaseAsteroid constructor(
@@ -35,8 +37,4 @@ fun List<DatabaseAsteroid>.asDomainModel(): List<Asteroid> {
     }
 }
 
-// database class for picture of the day
-data class DatabasePictureOfDay constructor(@Json(name = "media_type") val mediaType: String,
-                                            val title: String,
-                                            @PrimaryKey val url: String)
 
